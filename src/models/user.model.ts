@@ -1,4 +1,4 @@
-import {Entity, model, property, hasMany, belongsTo} from '@loopback/repository';
+import {belongsTo, Entity, hasMany, model, property} from '@loopback/repository';
 import {Login} from './login.model';
 import {Role} from './role.model';
 
@@ -47,9 +47,8 @@ export class User extends Entity {
 
   @property({
     type: 'string',
-    required: true,
-  })
-  password: string;
+})
+  password?: string;
 
   @hasMany(() => Login)
   logins: Login[];

@@ -1,29 +1,27 @@
+import {service} from '@loopback/core';
 import {
   Count,
   CountSchema,
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
+  del, get,
+  getModelSchemaRef, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
 import {User} from '../models';
 import {UserRepository} from '../repositories';
+import {UserSecurityService} from '../services';
 
 export class UserController {
   constructor(
     @repository(UserRepository)
     public userRepository : UserRepository,
+    @service(UserSecurityService)
+    public securityService: UserSecurityService
   ) {}
 
   @post('/usuario')
@@ -44,6 +42,13 @@ export class UserController {
     })
     user: Omit<User, '_id'>,
   ): Promise<User> {
+    // Create the password
+    let password = this.securityService.createPassword();
+    // Encrypt the password
+    let encryptedPassword = this.securityService.encrypText(password);
+    // Assign the encrypted password to the user
+    user.password = encryptedPassword;
+    // Send notification email
     return this.userRepository.create(user);
   }
 
