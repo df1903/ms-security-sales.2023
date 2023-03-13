@@ -1,7 +1,10 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Menu} from './menu.model';
+import {RoleMenu} from './role-menu.model';
+import {User} from './user.model';
 
 @model()
-export class Rol extends Entity {
+export class Role extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -20,14 +23,19 @@ export class Rol extends Entity {
   })
   description?: string;
 
+  @hasMany(() => Menu, {through: {model: () => RoleMenu}})
+  menus: Menu[];
 
-  constructor(data?: Partial<Rol>) {
+  @hasMany(() => User)
+  users: User[];
+
+  constructor(data?: Partial<Role>) {
     super(data);
   }
 }
 
-export interface RolRelations {
+export interface RoleRelations {
   // describe navigational properties here
 }
 
-export type RolWithRelations = Rol & RolRelations;
+export type RoleWithRelations = Role & RoleRelations;
